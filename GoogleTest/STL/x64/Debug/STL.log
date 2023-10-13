@@ -1,2 +1,3 @@
 ﻿  stl-all.cpp
-  STL.vcxproj -> D:\Programming\Progs\VSprog\GoogleTest\x64\Debug\STL.lib
+D:\Programming\GithubRep\sem3\GoogleTest\STL\stl-all.cpp(15,15): warning C4244: return: преобразование "double" в "float", возможна потеря данных
+  STL.vcxproj -> D:\Programming\GithubRep\sem3\GoogleTest\x64\Debug\STL.lib
