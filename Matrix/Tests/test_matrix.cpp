@@ -18,3 +18,8 @@ TEST(TMatrix, can_create_copied_matrix) {
 
   ASSERT_NO_THROW(TMatrix<int> m1(m));
 }
+
+TEST(TMatrix, can_get_pMem_element) {
+	TMatrix<int> m(5);
+	ASSERT_NO_THROW(m[3]);
+}

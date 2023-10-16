@@ -9,7 +9,12 @@ TEST(TVector, cant_create_too_large_vector) {
   ASSERT_ANY_THROW(TVector<int> v(MAX_VECTOR_SIZE + 1));
 }
 
-/*TEST(TVector, can_get_size) {
+TEST(TVector, can_get_pMem_element) {
+	TVector<int> v(5);
+	ASSERT_NO_THROW(v[3]);
+}
+/*
+TEST(TVector, can_get_size) {
   TVector<int> v(4);
 
   EXPECT_EQ(4, v._size());

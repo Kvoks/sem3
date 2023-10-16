@@ -10,9 +10,14 @@
 #include <vector>
 const int MAX_VECTOR_SIZE = 100000000;
 const int MAX_MATRIX_SIZE = 10000;
+
 template <typename T> class TVector;
+
 template <typename T> std::istream& operator>>(std::istream& istr, TVector<T>& v);
+
 template <typename T> std::ostream& operator<<(std::ostream& out, const TVector<T>& vec);
+
+
 template<typename T>
 class TVector {
 protected:
@@ -25,6 +30,8 @@ public:
             throw std::length_error("Vector size should be greater than zero");
         if (sz > MAX_VECTOR_SIZE)
             throw std::length_error("Vector size cannot be greater than MAX_VECTOR_SIZE = 100000000");
+        if (sz < 0)
+            throw std::length_error("Vector size cannot be less than zero");
         pMem = new T[sz]();
     }
 
@@ -36,32 +43,57 @@ public:
         std::copy(data, data + sz, pMem);
     }
 
-    /*~TVector() {
-        delete[]pMem;
-    };
+    // индексаци€
+    T& operator[](size_t ind) {
+        return pMem[ind];
+    }
+    const T& operator[](size_t ind) const {
+        return pMem[ind];
+    }
 
-    TVector(const TVector& v);
-
+    ~TVector() {
+        delete[] pMem;
+    }
+    
+    TVector(const TVector& v) : _size(v._size) {
+        pMem = new T[v._size];
+        std::copy(v.pMem, v.pMem + _size, pMem);
+    }
+    
+      /*
       TVector(TVector&& v) noexcept;
-
-      ~TVector() {
-          delete[]pMem;
-      };
-
-      TVector& operator=(const TVector& v);
 
       TVector& operator=(TVector&& v) noexcept;
 
       size_t size() const noexcept;
+      */
+      TVector& operator=(const TVector& v){
+          _size = v._size;
+          if (pMem != nullptr) {
+              delete[]pMem;
+          }
+          pMem = new T[_size];
+          std::copy(v.pMem, v.pMem + _size, pMem);
+          return *this;
+      }
 
-    // индексаци€
-      T& operator[](size_t ind);
-      const T& operator[](size_t ind) const;
+      
+
 
     // индексаци€ с контролем - почитать в чЄм разница и объ€снить при сдаче работы
-      T& at(size_t ind);
-      const T& at(size_t ind) const;
-
+      T& at(size_t ind) {
+          if ((ind > _size - 1) || (ind < 0)) {
+              throw std::out_of_range("Impossible to use a non-existent index");
+          }
+          return pMem[ind];
+      }
+      const T& at(size_t ind) const {
+          if ((ind > _size - 1) || (ind < 0)) {
+              throw std::out_of_range("Impossible to use a non-existent index");
+          }
+          return pMem[ind];
+      }
+      /*
     // сравнение
       bool operator==(const TVector& v) const noexcept;
       bool operator!=(const TVector& v) const noexcept;
@@ -111,14 +143,19 @@ class TMatrix : private TVector<TVector<T>> {
     using TVector<TVector<T>>::pMem;
     using TVector<TVector<T>>::_size;
 public:
-    TMatrix(size_t s = 1) : TVector<TVector<T>>(s) {
+    
+    TMatrix(size_t s) : TVector<TVector<T>>(s) {
+        if (s == 0)
+            throw std::length_error("Matrix size should be greater than zero");
+        if (s > MAX_MATRIX_SIZE)
+            throw std::length_error("Matrix size cannot be greater than MAX_MATRIX_SIZE = 10000");
         for (size_t i = 0; i < s; i++)
             pMem[i] = TVector<T>(s);
     }
-    /*
+    
     // почему можно сделать так? ќбъ€снить.
     using TVector<TVector<T>>::operator[];
-
+    /*
     // сравнение
     bool operator==(const TMatrix& m) const noexcept;
     bool operator!=(const TMatrix& m) const noexcept;
