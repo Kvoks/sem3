@@ -1,3 +1,0 @@
-﻿  test_STL.cpp
-D:\Programming\GithubRep\sem3\GoogleTest\tests\test_STL.cpp(17,40): warning C4305: инициализация: усечение из "double" в "float"
-  tests.vcxproj -> D:\Programming\GithubRep\sem3\GoogleTest\x64\Debug\tests.exe
