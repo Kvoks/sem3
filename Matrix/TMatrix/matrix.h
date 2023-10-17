@@ -8,6 +8,7 @@
 #include <conio.h>
 #include <math.h>
 #include <vector>
+#include <assert.h>
 const int MAX_VECTOR_SIZE = 100000000;
 const int MAX_MATRIX_SIZE = 10000;
 
@@ -60,14 +61,20 @@ public:
         std::copy(v.pMem, v.pMem + _size, pMem);
     }
     
-      /*
-      TVector(TVector&& v) noexcept;
+      
+    TVector(TVector&& v) noexcept:pMem(nullptr), _size(0) {
+        std::swap(v.pMem, pMem);
+        std::swap(v._size, _size);
+      }
 
-      TVector& operator=(TVector&& v) noexcept;
-
-      size_t size() const noexcept;
-      */
+    size_t size() const noexcept {
+        return _size;
+    }
+      
       TVector& operator=(const TVector& v){
+          if (this == &v){ 
+              return *this;
+          }
           _size = v._size;
           if (pMem != nullptr) {
               delete[]pMem;
@@ -76,7 +83,17 @@ public:
           std::copy(v.pMem, v.pMem + _size, pMem);
           return *this;
       }
-
+      TVector& operator=(TVector&& v) noexcept {
+          if (this == &v) {
+              return *this; 
+          }
+          delete[] pMem;
+          pMem = nullptr;
+          _size = 0;
+          std::swap(pMem, v.pMem);
+          std::swap(_size, v._size);
+          return *this;
+      }
       
 
 
@@ -93,24 +110,87 @@ public:
           }
           return pMem[ind];
       }
-      /*
+      
     // сравнение
-      bool operator==(const TVector& v) const noexcept;
-      bool operator!=(const TVector& v) const noexcept;
+      bool operator==(const TVector& v) const noexcept {
+          if (_size != v._size) {
+              return false;
+          }
+          for (int i = 0; i < _size; i++) {
+              if (pMem[i] != v.pMem[i]) {
+                  return false;
+              }
+          }
+          return true;
+      }
+      bool operator!=(const TVector& v) const noexcept {
+          return not(*this == v);
+      }
+      /*
+      TVector operator+(double val) {
 
-      TVector operator+(double val);
-      TVector operator-(double val);
-      TVector operator*(double val);
+      }
+      TVector operator-(double val) {
 
-      TVector operator+(T val);
-      TVector operator-(T val);
-      TVector operator*(T val);
+      }
+      TVector operator*(double val) {
 
-      TVector operator+(const TVector& v);
-      TVector operator-(const TVector& v);
+      }
+      */
+      TVector operator+(T val) {
+          TVector<T> l(*this);
+          for (int i = 0; i < _size; i++) {
+              l[i] = l[i] + val;
+          }
+          return l;
+      }
+      TVector operator-(T val) {
+          TVector<T> l(*this);
+          for (int i = 0; i < _size; i++) {
+              l[i] = l[i] - val;
+          }
+          return l;
+      }
+      TVector operator*(T val) {
+          TVector<T> l(*this);
+          for (int i = 0; i < _size; i++) {
+              l[i] = l[i] * val;
+          }
+          return l;
+      }
 
-      // почитать о noexcept(noexcept(T())) - объяснить назначение при сдаче
-      T operator*(const TVector& v) noexcept(noexcept(T()));*/
+      TVector operator+(const TVector& v) {
+          if (_size != v._size){ 
+              throw std::logic_error("Unequal dimensions"); 
+          }
+          TVector<T> l(*this);
+          for (int i = 0; i < _size; i++) {
+              l[i] = l[i] + v[i];
+          }
+          return l;
+      }
+      TVector operator-(const TVector& v) {
+          if (_size != v._size) {
+              throw std::logic_error("Unequal dimensions");
+          }
+          TVector<T> l(*this);
+          for (int i = 0; i < _size; i++) {
+              l[i] = l[i] - v[i];
+          }
+          return l;
+      }
+
+      // почитать о noexcept(noexcept(T())) - объяснить назначение при сдаче. конструктор перемещения и оператор присваивания с перемещением следует определять с ключевым словом noexcept, ведь он может генерировать исключения
+      T operator*(const TVector& v) noexcept(T()) {
+          if (_size != v._size) { 
+              throw std::logic_error("Unequal dimensions"); 
+          }
+          T l = 0;
+          for (int i = 0; i < _size; i++) {
+              l = l + v[i] * (*this)[i];
+          }
+          return l;
+      }
 
     friend void swap(TVector& lhs, TVector& rhs) noexcept;
 

@@ -13,3 +13,4 @@ x86/
 .vs/
 */.vs/
 **/.vs/
+Matrix/Tests/x64/Debug/Tests.ilk
